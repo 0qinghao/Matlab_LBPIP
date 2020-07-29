@@ -1,8 +1,8 @@
 # Custom
 *.jpg
 *.ppm
-!HEVC_like/bar.ppm
-!HEVC_like/kitchen.ppm
+# !HEVC_like/bar.ppm
+# !HEVC_like/kitchen.ppm
 *.bmp
 *.ecs*
 *.jpeg

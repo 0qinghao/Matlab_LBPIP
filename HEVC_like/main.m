@@ -18,7 +18,8 @@ function [PSNR] = main(inputName, quality, TH_fix, TH_div)
     outputName = strcat(picName, '_rebuild_', int2str(quality), '_', int2str(TH_fix), '.ppm');
 
     % [PSNR] = code_rec(inputName, baseName, fixvalName, modeName, outputName, Q_fix)
-    [PSNR] = code_rec(inputName, baseName, fixvalName, modeName, outputName, TH_fix, TH_div, quality)
+    % [PSNR] = code_rec(inputName, baseName, fixvalName, modeName, outputName, TH_fix, TH_div, quality)
+    [PSNR] = code_linespace(inputName, baseName, fixvalName, modeName, outputName, TH_fix, TH_div, quality)
     % [PSNR] = code_basekey(inputName, baseName, fixvalName, modeName, outputName, TH_fix, TH_div, quality)
 
 end

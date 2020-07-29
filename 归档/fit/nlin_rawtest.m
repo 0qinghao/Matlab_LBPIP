@@ -1,6 +1,7 @@
-% 33 dB 绝望
+% model = inline('b(1)+b(2)*exp(-b(3)*x(:,1))+b(4)*exp(-b(5)*x(:,2))+b(6)*exp(-b(7)*x(:,3))+b(8)*exp(-b(9)*x(:,4))', 'b', 'x');
+model = inline('b(1)-b(2)*x(:,1).^2+b(3)-b(4)*x(:,2).^2+b(5)-b(6)*x(:,3).^2+b(7)-b(8)*x(:,4).^2+b(9)', 'b', 'x');
+b0 = [0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5, 0.5];
 
-% load('./dnxy.mat')
 inputName = './../../HEVC_like/earth.ppm';
 rgb = imread(inputName);
 yuv = jpeg_rgb2ycbcr(rgb);
@@ -54,10 +55,12 @@ for i = 1:repeat_height
             % pd3yy = pd3y(:);
             % pd4yy = pd4y(:);
 
-            X = [ones(size(pd1)) pd1 pd2 pd3 pd4];
-            b = regress(mat_p(:), X);
+            x = [pd1 pd2 pd3 pd4];
+            % b = regress(mat_p(:), x);
+            b = nlinfit(x, mat_p(:), model, b0);
 
-            mat_fit = b(1) + b(2) * pd1 + b(3) * pd2 + b(4) * pd3 + b(5) * pd4;
+            % mat_fit = b(1) + b(2) * pd1 + b(3) * pd2 + b(4) * pd3 + b(5) * pd4;
+            mat_fit = b(1) - b(2) * pd1.^2 + b(3) - b(4) * pd2.^2 + b(5) - b(6) * pd3.^2 + b(7) - b(8) * pd4.^2 + b(9);
 
             rebuildmat = mat;
             rebuildmat(pre_ind) = mat_fit;
