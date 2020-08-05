@@ -33,6 +33,7 @@ function [err, pred, sae] = pred_direction(L, T, LT, src, theta)
         weight1 = ref2_index - proj_pos;
         weight2 = proj_pos - ref1_index;
         weight1(weight1 == 0) = 1;
+        % pred = (weight1 .* ref1_val + weight2 .* ref2_val);
         pred = round(weight1 .* ref1_val + weight2 .* ref2_val);
         err = src - pred;
         sae = sum(sum(abs(err)));
@@ -47,6 +48,7 @@ function [err, pred, sae] = pred_direction(L, T, LT, src, theta)
         weight1 = ref2_index - proj_pos;
         weight2 = proj_pos - ref1_index;
         weight1(weight1 == 0) = 1;
+        % pred = (weight1 .* ref1_val + weight2 .* ref2_val);
         pred = round(weight1 .* ref1_val + weight2 .* ref2_val);
         err = src - pred;
         sae = sum(sum(abs(err)));
@@ -86,6 +88,7 @@ function [err, pred, sae] = pred_direction(L, T, LT, src, theta)
             end
         end
         weight1(weight1 == 0) = 1;
+        % pred = (weight1 .* ref1_val + weight2 .* ref2_val);
         pred = round(weight1 .* ref1_val + weight2 .* ref2_val);
         err = src - pred;
         sae = sum(sum(abs(err)));
@@ -93,13 +96,13 @@ function [err, pred, sae] = pred_direction(L, T, LT, src, theta)
 end
 
 function [err, pred, sae, mode] = direction_select_4(L, T, LT, src)
-    NUM = 64;
+    NUM = 1024;
     for N = 1:NUM
         theta = 45 + ((225 - 45) / (NUM - 1)) * (N - 1);
-        [err_all{N}, pred_all{N}, sae_all{N}] = pred_direction(L, T, LT, src, theta);
+        [err_alldirection{N}, pred_alldirection{N}, sae_alldirection{N}] = pred_direction(L, T, LT, src, theta);
     end
 
-    [err, mode] = min(cell2mat(sae_all));
-    pred = pred_all{mode};
-    sae = sae_all{mode};
+    [err, mode] = min(cell2mat(sae_alldirection));
+    pred = pred_alldirection{mode};
+    sae = sae_alldirection{mode};
 end
