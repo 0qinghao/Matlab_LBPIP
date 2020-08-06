@@ -4,8 +4,8 @@ function [err, pred, sae, mode, preview] = h264intra_test_4(inputName)
     yuv = double(jpeg_rgb2ycbcr(rgb));
     lum = yuv(:, :, 1);
     err = {}; pred = {}; sae = {}; mode = {}; preview = {};
-    for x = 2:4:108 - 7
-        for y = 2:4:192 - 7
+    for x = 2:4:1080 - 7
+        for y = 2:4:1920 - 7
             src = lum(x:x + 3, y:y + 3);
             T = lum(x - 1, y:y + 7);
             L = lum(x:x + 7, y - 1);
