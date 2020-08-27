@@ -1,22 +1,40 @@
-function [err, pred, sae, dir, w1, w2, preview] = alldirection_allweight_test_4(inputName, direction_num)
+function [err, pred, sae, dir, w1, w2, preview] = test_kitchen_4956(direction_num)
     clear err pred sae dir w1 w2 preview
+    inputName = './../../HEVC_like/kitchen.ppm';
     rgb = imread(inputName);
     yuv = double(jpeg_rgb2ycbcr(rgb));
     lum = yuv(:, :, 1);
     err = {}; pred = {}; sae = {}; dir = {}; preview = {}; w1 = {}; w2 = {};
     blk_cnt = 1;
-    for x = 2:4:108 - 7
-        x
-        for y = 2:4:192 - 7
-            src = lum(x:x + 3, y:y + 3);
-            T = lum(x - 1, y:y + 7);
-            L = lum(x:x + 7, y - 1);
-            LT = lum(x - 1, y - 1);
+    for rr = 1:3
+        for x = 49:8:56
+            for y = 49:8:56
+                y
+                src = yuv(x:x + 7, y:y + 7, rr);
+                % T = yuv(x - 1, y:y + 15, rr);
+                % L = yuv(x:x + 15, y - 1, rr);
+                % LT = yuv(x - 1, y - 1, rr);
+                if rr == 1
+                    T = [68 69 68 74 66 62 67 63 57 58 53 56 52 50 49 51];
+                    L = [67; 64; 68; 67; 71; 65; 73; 66; 73; 66; 68; 70; 66; 67; 69; 73];
+                    LT = 66;
+                end
+                if rr == 2
+                    T = [123 123 123 123 123 123 123 123 123 124 124 124 124 124 124 124];
+                    L = [122; 122; 122; 122; 122; 122; 122; 122; 122; 122; 122; 122; 122; 122; 122; 123];
+                    LT = 123;
+                end
+                if rr == 3
+                    T = repmat(131, 1, 16);
+                    L = repmat(131, 16, 1);
+                    LT = 131;
+                end
 
-            [err{blk_cnt}, pred{blk_cnt}, sae{blk_cnt}, dir{blk_cnt}, w1{blk_cnt}, w2{blk_cnt}] = direction_weight_select_4(L, T, LT, src, direction_num);
-            preview{blk_cnt} = [LT, T(1:4); [L(1:4), src]];
+                [err{blk_cnt}, pred{blk_cnt}, sae{blk_cnt}, dir{blk_cnt}, w1{blk_cnt}, w2{blk_cnt}] = direction_weight_select_4(L, T, LT, src, direction_num);
+                preview{blk_cnt} = [LT, T(1:8); [L(1:8), src]];
 
-            blk_cnt = blk_cnt + 1;
+                blk_cnt = blk_cnt + 1;
+            end
         end
     end
     sae = cell2mat(sae);
@@ -60,7 +78,7 @@ function [err, pred, sae, dir, w1, w2] = direction_weight_select_4(L, T, LT, src
 end
 
 function [ref1_val, ref2_val] = get_ref1_2(L, T, LT, theta)
-    v_mat = [1, 1, 1, 1; 2, 2, 2, 2; 3, 3, 3, 3; 4, 4, 4, 4];
+    v_mat = [1, 1, 1, 1, 1, 1, 1, 1; 2, 2, 2, 2, 2, 2, 2, 2; 3, 3, 3, 3, 3, 3, 3, 3; 4, 4, 4, 4, 4, 4, 4, 4; 5, 5, 5, 5, 5, 5, 5, 5; 6, 6, 6, 6, 6, 6, 6, 6; 7, 7, 7, 7, 7, 7, 7, 7; 8, 8, 8, 8, 8, 8, 8, 8];
     h_mat = v_mat';
     if theta <= 90
         % 暂时不考虑 90 度没法算的问题，因为不会出现这个角度
@@ -86,8 +104,8 @@ function [ref1_val, ref2_val] = get_ref1_2(L, T, LT, theta)
         proj_pos_v = v_mat - offset_v;
         proj_T_flag = proj_pos_h >= 0;
         % proj_L_falg = not(proj_T_flag);
-        for i = 1:4
-            for j = 1:4
+        for i = 1:8
+            for j = 1:8
                 if proj_T_flag(i, j)
                     ref1_index = floor(proj_pos_h(i, j));
                     ref2_index = ceil(proj_pos_h(i, j));
