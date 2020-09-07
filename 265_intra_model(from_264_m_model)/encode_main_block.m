@@ -3,23 +3,15 @@ function [Seq_r, bits_frame, mode_all, icp_all_block, err_all_block, dctq_all_bl
     Seq = double(Seq);
 
     global QP h w
-    % global Table_coeff0 Table_coeff1 Table_coeff2 Table_coeff3
-    % global Table_run Table_zeros
     % load table.mat
 
     [h, w] = size(Seq);
     QP = Quant;
 
-    % [bits_frame1, Seq_r1, sae1] = intra_4(Seq);
     [bits_frame2, mode_all, Seq_r2, icp_all_block, err_all_block, dctq_all_block] = intra_16(Seq);
 
-    % if sae1 < sae2
-    %     bits_frame = bits_frame1;
-    %     Seq_r = Seq_r1;
-    % else
     bits_frame = bits_frame2;
     Seq_r = uint8(Seq_r2(2:h - 32, 2:w - 32));
-    % end
 end
 
 %--------------------------------------------------------------
@@ -29,7 +21,6 @@ function [bits_frame, mode_all, Seq_r, icp_all_block, err_all_block, dctq_all_bl
     % total_sae = 0;
     mode_all = [];
     cnt = 1;
-    % Seq_r = zeros(h, w) + 128;
     Seq_r = nan(h, w);
     Seq_r(1, :) = 128;
     Seq_r(:, 1) = 128;

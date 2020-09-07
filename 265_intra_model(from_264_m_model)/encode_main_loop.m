@@ -48,6 +48,7 @@ function [bits_frame, mode_all, Seq_r, icp_all_block, err_all_block, dctq_all_bl
                 end
             end
             bits = encode_icp_loop(icp_loop);
+            % bits = encode_icp_loop_sort(dctq_blk);
             bits_frame = bits_frame + bits;
             icp_all_block{blk_ind} = icp_blk;
             err_all_block{blk_ind} = Seq_r(i:i + 15, j:j + 15) - Seq(i:i + 15, j:j + 15);
