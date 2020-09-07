@@ -1,0 +1,168 @@
+function [Seq_r, bits_frame] = encode_main_loop(Seq, Quant)
+    initGlobals(80);
+    Seq = double(Seq);
+
+    global QP h w
+    global Table_coeff0 Table_coeff1 Table_coeff2 Table_coeff3
+    global Table_run Table_zeros
+    load table.mat
+
+    [h, w] = size(Seq);
+    QP = Quant;
+
+    % [bits_frame1, Seq_r1, sae1] = intra_4(Seq);
+    [bits_frame2, Seq_r2, sae2] = intra_16(Seq);
+
+    % if sae1 < sae2
+    %     bits_frame = bits_frame1;
+    %     Seq_r = Seq_r1;
+    % else
+    bits_frame = bits_frame2;
+    Seq_r = uint8(Seq_r2(2:h - 32, 2:w - 32));
+    % end
+end
+
+%--------------------------------------------------------------
+function [bits_frame, Seq_r, total_sae] = intra_16(Seq)
+
+    global h w
+
+    bits_frame = 0;
+    total_sae = 0;
+    mode_prev = 0;
+    mode = 0;
+    mb_type = 0; % 0 denotes 16x16, 1 denotes 4x4
+
+    Seq_r = nan(h, w);
+    Seq_r(1, :) = 128;
+    Seq_r(:, 1) = 128;
+
+    for i = 2:16:h - 32
+        for j = 2:16:w - 32
+            for k = 0:14
+                [icp, pred, sae, mode] = mode_select_16(Seq, Seq_r, i, j, k);
+                % [bits, mode_prev] = mb_header(mb_type, mode, mode_prev);
+                % bits_frame = [bits_frame bits];
+
+                [icp_r] = code_block_loop(icp);
+                Seq_r(1, 1:16 - k) = pred(1, 1:16 - k) + icp_r(1:16 - k);
+                Seq_r(2:16 - k, 1) = pred(2:16 - k, 1) + icp_r(16 - k + 1:end);
+                Seq_r(i:i + 15, j:j + 15) = icp_r + pred;
+                total_sae = total_sae + sae;
+                % end
+
+            end
+            bits_frame = bits_frame + bits;
+        end
+
+    end
+end
+%--------------------------------------------------------
+%% Transform, Quantization, Entropy coding
+% transform = Integer transform
+% Quantization = h.264
+% VLC = CAVLC (H.264)
+
+function [err_r] = code_block_loop(err)
+
+    global QP
+    Q = QP;
+
+    c = round(dct(err));
+    cq = round(c / Q);
+    Wi = round(cq * Q);
+    Y = round(idct(Wi));
+    err_r = Y;
+
+end
+function [err_r, bits_mb] = code_block(err)
+
+    global QP
+
+    [n, m] = size(err);
+
+    bits_mb = '';
+
+    for i = 1:4:n
+        for j = 1:4:m
+            c(i:i + 3, j:j + 3) = integer_transform(err(i:i + 3, j:j + 3));
+            cq(i:i + 3, j:j + 3) = quantization(c(i:i + 3, j:j + 3), QP);
+            [bits_b] = enc_cavlc(cq(i:i + 3, j:j + 3), 0, 0);
+            bits_mb = [bits_mb bits_b];
+            Wi = inv_quantization(cq(i:i + 3, j:j + 3), QP);
+            Y = inv_integer_transform(Wi);
+            err_r(i:i + 3, j:j + 3) = round(Y / 64);
+        end
+    end
+
+end
+%-------------------------------------------------------
+%% 16x16 Horizontal prediciton
+
+function [icp, pred, sae, mode] = mode_select_16(Seq, Seq_r, i, j, k)
+    dst = [Seq(i + k, j + k:j + 15), Seq(i + k + 1:i + 15, j + k)'];
+    PU = 16;
+    PX = Seq_r(i + k - 1:i + k + 31, j + k - 1);
+    PY = Seq_r(i + k - 1, j + k - 1:j + k + 31);
+
+    % Smoothing Filter
+    [PF_X, PF_Y] = Intra_Smoothing(PU, PX, PY);
+
+    % Intra DC Prediction
+    Intra_DC = DC_Model(PU, PX, PY);
+
+    % Intra Planar Prediction
+    Intra_Planar = Planar_Model(PU, PX, PY);
+
+    % Intra Angular Prediction
+    [iFact, Intra_Angular] = Intra_Angular_Model(double(PY), double(PX), double(PF_Y), double(PF_X), PU);
+
+    %       for j=1:n_mode
+    encoded_pixels{1} = Intra_DC;
+    encoded_pixels{2} = Intra_Planar;
+    encoded_pixels{3} = Intra_Angular{1};
+    encoded_pixels{4} = Intra_Angular{2};
+    encoded_pixels{5} = Intra_Angular{3};
+    encoded_pixels{6} = Intra_Angular{4};
+    encoded_pixels{7} = Intra_Angular{5};
+    encoded_pixels{8} = Intra_Angular{6};
+    encoded_pixels{9} = Intra_Angular{7};
+    encoded_pixels{10} = Intra_Angular{8};
+    encoded_pixels{11} = Intra_Angular{9};
+    encoded_pixels{12} = Intra_Angular{10};
+    encoded_pixels{13} = Intra_Angular{11};
+    encoded_pixels{14} = Intra_Angular{12};
+    encoded_pixels{15} = Intra_Angular{13};
+    encoded_pixels{16} = Intra_Angular{14};
+    encoded_pixels{17} = Intra_Angular{15};
+    encoded_pixels{18} = Intra_Angular{16};
+    encoded_pixels{19} = Intra_Angular{17};
+    encoded_pixels{20} = Intra_Angular{18};
+    encoded_pixels{21} = Intra_Angular{19};
+    encoded_pixels{22} = Intra_Angular{20};
+    encoded_pixels{23} = Intra_Angular{21};
+    encoded_pixels{24} = Intra_Angular{22};
+    encoded_pixels{25} = Intra_Angular{23};
+    encoded_pixels{26} = Intra_Angular{24};
+    encoded_pixels{27} = Intra_Angular{25};
+    encoded_pixels{28} = Intra_Angular{26};
+    encoded_pixels{29} = Intra_Angular{27};
+    encoded_pixels{30} = Intra_Angular{28};
+    encoded_pixels{31} = Intra_Angular{29};
+    encoded_pixels{32} = Intra_Angular{30};
+    encoded_pixels{33} = Intra_Angular{31};
+    encoded_pixels{34} = Intra_Angular{32};
+    encoded_pixels{35} = Intra_Angular{33};
+
+    for m = 1:35
+        enc_loop = encoded_pixels{m};
+        icp_all{m} = dst - [enc_loop(1, 1:16 - k), enc_loop(2:16 - k, 1)'];
+        sae_all(m) = sum(abs(icp_all{m}));
+    end
+
+    [sae, mode] = min(sae_all);
+
+    icp = icp_all{mode};
+    pred = encoded_pixels{mode};
+
+end
