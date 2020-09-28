@@ -1,6 +1,10 @@
 # Custom
 *.jpg
 *.ppm
+*.csv
+*.bin
+*.yuv
+*.mat
 # !HEVC_like/bar.ppm
 # !HEVC_like/kitchen.ppm
 *.bmp
