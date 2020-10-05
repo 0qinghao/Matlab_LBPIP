@@ -5,6 +5,7 @@
 *.bin
 *.yuv
 *.mat
+*block*.txt
 # !HEVC_like/bar.ppm
 # !HEVC_like/kitchen.ppm
 *.bmp
