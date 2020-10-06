@@ -13,23 +13,21 @@ function [pred_1d] = Planar_Model_loop(PU, PX, PY)
     % 暂时用最边缘的像素替代外侧扩展的那个
     tr = PY(PU + 1);
     bl = PX(PU + 1);
+    j = 1;
     for i = 1:PU
-        for j = 1:1
-            w_t = PU - 1 - (i - 1);
-            w_bl = PU - w_t;
-            w_l = PU - 1 - (j - 1);
-            w_tr = PU - w_l;
-            Intra_Planar(i, j) = round((w_t * PY(j + 1) + w_bl * bl + w_l * PX(i + 1) + w_tr * tr) / 2 / PU);
-        end
+        w_t = PU - 1 - (i - 1);
+        w_bl = PU - w_t;
+        w_l = PU - 1 - (j - 1);
+        w_tr = PU - w_l;
+        Intra_Planar(i, j) = round((w_t * PY(j + 1) + w_bl * bl + w_l * PX(i + 1) + w_tr * tr) / 2 / PU);
     end
-    for i = 1:1
-        for j = 1:PU
-            w_t = PU - 1 - (i - 1);
-            w_bl = PU - w_t;
-            w_l = PU - 1 - (j - 1);
-            w_tr = PU - w_l;
-            Intra_Planar(i, j) = round((w_t * PY(j + 1) + w_bl * bl + w_l * PX(i + 1) + w_tr * tr) / 2 / PU);
-        end
+    i = 1;
+    for j = 2:PU
+        w_t = PU - 1 - (i - 1);
+        w_bl = PU - w_t;
+        w_l = PU - 1 - (j - 1);
+        w_tr = PU - w_l;
+        Intra_Planar(i, j) = round((w_t * PY(j + 1) + w_bl * bl + w_l * PX(i + 1) + w_tr * tr) / 2 / PU);
     end
 
     if (PU ~= 1)

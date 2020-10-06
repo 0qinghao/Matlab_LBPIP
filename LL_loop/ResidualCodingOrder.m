@@ -1,4 +1,4 @@
-function Y = ResidualCoding(A, cIdx, IntraPredModeY, IntraPredModeC)
+function Y = ResidualCodingOrder(A, cIdx, IntraPredModeY, IntraPredModeC)
     %UNTITLED 此处显示有关此函数的摘要
     %   此处显示详细说明
     TrafoSize = size(A, 1);
@@ -18,7 +18,7 @@ function Y = ResidualCoding(A, cIdx, IntraPredModeY, IntraPredModeC)
     else
         scanIdx = 0;
     end
-    r = size(A, 1);
+    r = TrafoSize;
     Y = zeros(1, r * r);
     k = 0;
     if (scanIdx == 0)

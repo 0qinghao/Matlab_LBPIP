@@ -1,5 +1,8 @@
 % loop 模式中的 top 和 left 仅是预测块上方和左方的内容，并没有右上角左下角的扩展
 function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, BlockSize)
+
+    single_loop_index = [[4 * BlockSize + 2:5 * BlockSize + 1], [5 * BlockSize + 2:BlockSize:(BlockSize + 3) * BlockSize + 2]];
+
     top = Top_Pixels_t;
     top(end + 1:2 * BlockSize + 1) = Top_Pixels_t(end);
     left = Left_Pixels_t;
@@ -99,7 +102,7 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
 
         % VER Mode
         if (predModeIntra == 26)
-            for i = (4 * nS + 2):vec_num
+            for i = single_loop_index
                 ix = p_vec(i, 1);
                 pred_pos_in_p_vec = order_map(1, ix + 2);
                 pred_mtx(i, pred_pos_in_p_vec) = 1;
@@ -108,7 +111,7 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
 
         % HOR Mode
         if (predModeIntra == 10)
-            for i = (4 * nS + 2):vec_num
+            for i = single_loop_index
                 iy = p_vec(i, 2);
                 pred_pos_in_p_vec = order_map(iy + 2, 1);
                 pred_mtx(i, pred_pos_in_p_vec) = 1;
@@ -182,7 +185,7 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
         % end
         %****************************************************************
 
-        for i = (4 * nS + 2):vec_num
+        for i = single_loop_index
             if predModeIntra >= 18
                 x = p_vec(i, 1);
                 y = p_vec(i, 2);
@@ -224,7 +227,7 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
         ref(1:2 * nS + 1) = left';
         ref(2 * nS + 2:4 * nS + 1) = top(2:end);
         pred_pix = nan(nS, nS);
-        for i = (4 * nS + 2):vec_num
+        for i = single_loop_index
             pred_pix_ind = i - 4 * nS - 1;
             temp_w_line = pred_mtx(i, :);
             ref_ind = find(temp_w_line ~= 0, 2);

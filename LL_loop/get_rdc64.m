@@ -25,7 +25,7 @@ function [spilt_frame, mode_frame, rdc, img_rebuild_temp] = get_rdc64(CTU, img_s
         else
             mode_bits = 6;
         end
-        rdc_curr(i) = cal_rdc(prederr_blk, mode_bits);
+        rdc_curr(i) = cal_rdc_blk(prederr_blk, mode_blk, mode_bits);
         % mode_log(i) = mode_blk;
         rdc_deep = sum(rdc_32((i - 1) * 4 + 1:(i - 1) * 4 + 4));
         if (rdc_curr(i) <= rdc_deep)

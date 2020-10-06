@@ -24,7 +24,7 @@ function [spilt_frame, mode_frame, rdc] = get_rdc4(CTU, img_src, img_rebuild, sp
         else
             mode_bits = 6;
         end
-        rdc(i) = cal_rdc(prederr_blk, mode_bits);
+        rdc(i) = cal_rdc_blk(prederr_blk, mode_blk, mode_bits);
         % mode_log(i) = mode_blk;
     end
 
