@@ -1,4 +1,4 @@
-function [spilt_frame, mode_frame, rdc] = get_rdc4_loop(CTU, img_src, img_rebuild, spilt_frame, mode_frame)
+function [split_frame, mode_frame, rdc] = get_rdc4_loop(CTU, img_src, img_rebuild, split_frame, mode_frame)
     PU = 4; %4 8 16 32 64
     PU_num = 256; %256 64 16 4 1
     find_step = 1; %1 4 16 64 256
@@ -29,5 +29,5 @@ function [spilt_frame, mode_frame, rdc] = get_rdc4_loop(CTU, img_src, img_rebuil
     end
 
     mode_frame = mode_frame_temp;
-    spilt_frame(CTU.x:CTU.x + 63, CTU.y:CTU.y + 63) = 4;
+    split_frame(CTU.x:CTU.x + 63, CTU.y:CTU.y + 63) = 4;
 end

@@ -1,4 +1,4 @@
-function [spilt_frame, mode_frame, rdc] = get_rdc32(CTU, img_src, img_rebuild, spilt_frame, mode_frame, rdc_16)
+function [split_frame, mode_frame, rdc] = get_rdc32(CTU, img_src, img_rebuild, split_frame, mode_frame, rdc_16)
     img_rebuild_temp = img_rebuild;
     PU = 32; %4 8 16 32 64
     PU_num = 4; %256 64 16 4 1
@@ -31,11 +31,11 @@ function [spilt_frame, mode_frame, rdc] = get_rdc32(CTU, img_src, img_rebuild, s
         if (rdc_curr(i) <= rdc_deep)
             rdc(i) = rdc_curr(i);
             mode_frame = Mode_All(mode_frame, x(i), y(i), PU, mode_blk);
-            spilt_frame = Mode_All(spilt_frame, x(i), y(i), PU, PU);
+            split_frame = Mode_All(split_frame, x(i), y(i), PU, PU);
         else
             rdc(i) = rdc_deep;
             % mode_frame 保持不变
-            % spilt_frame 保持不变
+            % split_frame 保持不变
         end
     end
 end

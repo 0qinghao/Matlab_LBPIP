@@ -1,4 +1,4 @@
-function [CTU, src_double] = spilt_CTU()
+function [CTU, src_double] = split_CTU()
     % load('./basketballdrill_ll_srcy.mat', 'srcy');
     % load('./chinaspeed_ll_src_pu.mat', 'srcy');
     load('./traffic_ll_src_pu.mat', 'srcy');
