@@ -1,4 +1,4 @@
-function [size_all, blk_size_sum] = summary_loop(CTU_bits, split_frame, mode_frame)
+function [size_all, blk_size_sum] = summary_comb(CTU_bits, split_frame, mode_frame)
 
     size_all = sum(CTU_bits);
 

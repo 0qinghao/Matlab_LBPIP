@@ -6,7 +6,8 @@ function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU_loop(CTU,
     [split_frame_32, mode_frame_32, rdc_32] = get_rdc32_loop(CTU, img_src, img_rebuild, split_frame_16, mode_frame_16, rdc_16);
     [split_frame_64, mode_frame_64, rdc_64, img_rebuild_64] = get_rdc64_loop(CTU, img_src, img_rebuild, split_frame_32, mode_frame_32, rdc_32);
 
-    CTU_bits = rdc_64;
+    CTU_split_tree_bits = getbitlength(split_frame_64(CTU.x:CTU.x + 63, CTU.y:CTU.y + 63));
+    CTU_bits = rdc_64 + CTU_split_tree_bits;
     split_frame = split_frame_64;
     img_rebuild = img_rebuild_64;
     mode_frame = mode_frame_64;
