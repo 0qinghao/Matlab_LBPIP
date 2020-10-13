@@ -2,7 +2,7 @@ load('./Luma.mat');
 log = Luma;
 filecnt = length(Luma);
 
-for f = 1:filecnt
+for f = 15:15
     tic
 
     srcy = Luma(f).Ydata;

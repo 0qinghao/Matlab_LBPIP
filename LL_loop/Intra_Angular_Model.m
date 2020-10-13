@@ -194,9 +194,8 @@ function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
         pred_pix = nan(nS, nS);
         for i = (4 * nS + 2):vec_num
             pred_pix_ind = i - 4 * nS - 1;
-            temp_w_line = pred_mtx(i, :);
-            ref_ind = find(temp_w_line ~= 0, 2);
-            ref_w = temp_w_line(ref_ind);
+            ref_ind = find(pred_mtx(i, :) ~= 0, 2);
+            ref_w = pred_mtx(i, ref_ind);
             if numel(ref_ind) ~= 1
                 pred_pix(pred_pix_ind) = round(ref_w(1) * ref(ref_ind(1)) + ref_w(2) * ref(ref_ind(2)));
             else
