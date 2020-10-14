@@ -229,8 +229,9 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
         pred_pix = nan(nS, nS);
         for i = single_loop_index
             pred_pix_ind = i - 4 * nS - 1;
-            ref_ind = find(pred_mtx(i, :) ~= 0, 2);
-            ref_w = pred_mtx(i, ref_ind);
+            temp_w_line = pred_mtx(i, :);
+            ref_ind = find(temp_w_line ~= 0, 2);
+            ref_w = temp_w_line(ref_ind);
             if numel(ref_ind) ~= 1
                 pred_pix(pred_pix_ind) = round(ref_w(1) * ref(ref_ind(1)) + ref_w(2) * ref(ref_ind(2)));
             else
