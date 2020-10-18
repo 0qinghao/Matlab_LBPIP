@@ -1,7 +1,7 @@
 function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_main_comb(srcy)
     initGlobals(100);
-    global zorder;
-    zorder = gen_zorder_mat();
+    % global zorder;
+    % zorder = gen_zorder_mat();
 
     [CTU, img_src] = split_CTU(srcy);
     [h, w] = size(srcy);
@@ -10,9 +10,10 @@ function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_ma
     mode_frame = nan(h, w);
 
     for i = 1:numel(CTU)
-        % for i = 1:1
+        % for i = 1:2
+        i
         [CTU_bits(i), img_rebuild, split_frame, mode_frame] = encode_CTU_comb(CTU(i), img_src, img_rebuild, split_frame, mode_frame);
     end
 
-    [size_all, blk_size_sum] = summary_comb(CTU_bits, split_frame, mode_frame);
+    [size_all, blk_size_sum] = summary(CTU_bits, split_frame, mode_frame);
 end

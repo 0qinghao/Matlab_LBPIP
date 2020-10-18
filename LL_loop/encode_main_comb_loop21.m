@@ -15,5 +15,5 @@ function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_ma
         [CTU_bits(i), img_rebuild, split_frame, mode_frame] = encode_CTU_comb_loop21(CTU(i), img_src, img_rebuild, split_frame, mode_frame);
     end
 
-    [size_all, blk_size_sum] = summary_comb(CTU_bits, split_frame, mode_frame);
+    [size_all, blk_size_sum] = summary(CTU_bits, split_frame, mode_frame);
 end
