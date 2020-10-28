@@ -13,6 +13,6 @@ function split_bit_len = getbitlength_np_blk(s_mat)
     %assert(cnt64 == 1)
     split_bit_len = cnt8 + cnt16 + cnt32 + cnt64;
 
-    % ä¼°ç®—
+    % ¹ÀËã
     split_bit_len = split_bit_len * 2;
 end

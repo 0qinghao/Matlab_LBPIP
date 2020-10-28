@@ -1,3 +1,4 @@
+% ±àÂëµ¥¸ö CTU
 function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU(CTU, img_src, img_rebuild, split_frame, mode_frame)
 
     [z_ind_x_mat, z_ind_y_mat, z_size_mat, rdc_ind_mat] = gen_z_mat();
@@ -26,7 +27,6 @@ function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU(CTU, img_
 
             case 64
                 [img_rebuild, split_frame, mode_frame, rdc_64(rdc_ind)] = get_rdc64(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_32, rdc_ind);
-
         end
     end
 

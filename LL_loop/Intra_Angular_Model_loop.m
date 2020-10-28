@@ -1,4 +1,4 @@
-% loop 模式中的 top 和 left 仅是预测块上方和左方的内容，并没有右上角左下角的扩展
+% loop ģʽ�е� top �� left ����Ԥ����Ϸ����󷽵����ݣ���û�����Ͻ����½ǵ���չ
 function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, BlockSize)
 
     single_loop_index = [[4 * BlockSize + 2:5 * BlockSize + 1], [5 * BlockSize + 2:BlockSize:(BlockSize + 3) * BlockSize + 2]];

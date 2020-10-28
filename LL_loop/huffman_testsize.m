@@ -1,6 +1,6 @@
+% 计算 huffman 编码 array 需要的 bits
+% 使用的码表和 initGlobal 有关，测试中用 Q=100 对应的表
 function size = huffman_testsize(array)
-    global bufferPutBits_test;
-    global bufferPutBuffer_test;
     bufferPutBuffer_test = 0;
     bufferPutBits_test = 0;
 
@@ -45,38 +45,36 @@ function size = huffman_testsize(array)
     end
 
     size = size * 8 + bufferPutBits_test;
-end
 
-function l = bufferIt(code, size)
-    l = 0;
-    global bufferPutBits_test;
-    global bufferPutBuffer_test;
+    function l = bufferIt(code, sym_size)
+        l = 0;
 
-    if code < 0
-        code = (2^32) + code;
-    end
-    PutBuffer = code;
-    PutBits = bufferPutBits_test;
-
-    temp = bitshift(1, size) - 1;
-
-    PutBuffer = bitand(PutBuffer, temp);
-    PutBits = PutBits + size;
-    PutBuffer = bitshift(PutBuffer, 24 - PutBits);
-    PutBuffer = bitor(PutBuffer, bufferPutBuffer_test);
-
-    while PutBits >= 8
-        c = bitand(bitshift(PutBuffer, -16), hex2dec('FF'));
-        l = l + 1;
-
-        if c == hex2dec('FF')
-            l = l + 1;
+        if code < 0
+            code = (2^32) + code;
         end
-        %         PutBuffer = bitshift(PutBuffer, 8);
-        PutBuffer = bitand(bitshift(1, 24) - 1, bitshift(PutBuffer, 8));
+        PutBuffer = code;
+        PutBits = bufferPutBits_test;
 
-        PutBits = PutBits - 8;
+        t = bitshift(1, sym_size) - 1;
+
+        PutBuffer = bitand(PutBuffer, t);
+        PutBits = PutBits + sym_size;
+        PutBuffer = bitshift(PutBuffer, 24 - PutBits);
+        PutBuffer = bitor(PutBuffer, bufferPutBuffer_test);
+
+        while PutBits >= 8
+            c = bitand(bitshift(PutBuffer, -16), hex2dec('FF'));
+            l = l + 1;
+
+            if c == hex2dec('FF')
+                l = l + 1;
+            end
+            %         PutBuffer = bitshift(PutBuffer, 8);
+            PutBuffer = bitand(bitshift(1, 24) - 1, bitshift(PutBuffer, 8));
+
+            PutBits = PutBits - 8;
+        end
+        bufferPutBuffer_test = PutBuffer;
+        bufferPutBits_test = PutBits;
     end
-    bufferPutBuffer_test = PutBuffer;
-    bufferPutBits_test = PutBits;
 end

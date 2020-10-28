@@ -1,3 +1,4 @@
+% HEVC 标准 33 个角度预测值
 function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
 
     intraPredAngleSet = [NaN, NaN, ...% Planar, DC

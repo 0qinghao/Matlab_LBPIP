@@ -30,7 +30,7 @@ function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU_np(CTU, i
         end
     end
 
-    CTU_split_tree_bits = getbitlength(split_frame(CTU.x:CTU.x + 63, CTU.y:CTU.y + 63));
+    CTU_split_tree_bits = gettreesize(split_frame(CTU.x:CTU.x + 63, CTU.y:CTU.y + 63), 64);
     CTU_bits = rdc_64 + CTU_split_tree_bits;
 
 end

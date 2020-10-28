@@ -1,3 +1,4 @@
+% 返回 DC 模式预测值
 function Intra_DC = DC_Model(PU, PX, PY)
 
     % Intra DC Prediction

@@ -10,7 +10,7 @@ function [pred_1d] = Planar_Model_loop(PU, PX, PY)
     % Output:
     %   Intra_Planar : Planar Predicted Output PU
 
-    % 鏆傛椂鐢ㄦ渶杈圭紭鐨勫儚绱犳浛浠ｅ渚ф墿灞曠殑閭ｄ釜
+    % 暂时用最边缘的像素替代外侧扩展的那个
     tr = PY(PU + 1);
     bl = PX(PU + 1);
     j = 1;

@@ -1,5 +1,5 @@
-function [img_rebuild, split_frame, mode_frame, rdc] = get_rdc8_np(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_deep_layer, rdc_ind)
-    PU = 8; %4 8 16 32 64
+function [img_rebuild, split_frame, mode_frame, rdc] = get_rdc16_np(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_deep_layer, rdc_ind)
+    PU = 16; %4 8 16 32 64
     mask_mat = [1111, 0111, 1011, 1101, 1110];
     for i = 1:5
         mask{i} = mask_mat(i);

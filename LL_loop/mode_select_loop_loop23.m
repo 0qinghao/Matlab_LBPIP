@@ -1,5 +1,5 @@
 function [prederr_blk_loop, pred_blk_loop, mode_blk_loop] = mode_select_loop_loop23(Seq, Seq_r, i, j, PU)
-    for k = PU:-1:3
+    for k = PU:-1:4
         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);
 
         [Seq_r] = get_rebuild_loop(prederr_loop, pred_loop, i, j, k, PU, Seq_r);

@@ -9,7 +9,7 @@ function [pred_1d] = DC_Model_loop(PU, PX, PY)
 
     % Output:
     %   Intra_DC : DC Predicted Output PU
-    % TODO: Ф╡║Ф°┴Г■╗Д╦┼Е╥╕Д╦┼Х╖▓И┌ёД╦╙О╪▄Ф°┴Е©┘Х╕│Г■╗Д╦┼Е░≈О╪÷
+    % TODO: ц╩спсциовСио╫гдг╦Жё╛сп╠ьр╙сциобПё©
     dc_Val = round((sum(PY(2:PU + 1)) + sum(PX(2:PU + 1))) / 2 / PU);
 
     if (PU ~= 1)
