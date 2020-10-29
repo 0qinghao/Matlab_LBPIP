@@ -1,6 +1,6 @@
 % 新分块方法下，使用换装方法预测一个块
 % 根据模式，有可能出现前一半环参考像素并非全可用的状况，所以前半后半需要分开考虑
-function [prederr_blk_loop, pred_blk_loop, mode_blk_loop, reuse_out] = mode_select_loop_np(Seq, Seq_r, i, j, PU, mask, reuse_in)
+function [prederr_blk_loop, pred_blk_loop, mode_blk_loop, reuse_out] = mode_select_loop_np(Seq, Seq_r, i, j, PU, mask, reuse_in, rb_loop_reuse)
     % 前一半环 1111 1110 模式的结果是一样的，可以保留 1111 的计算结果复用（1111模式最先算），节省运算时间
     if (mask == 1110)
         prederr_blk_loop = reuse_in.prederr_blk_loop;
@@ -34,32 +34,34 @@ function [prederr_blk_loop, pred_blk_loop, mode_blk_loop, reuse_out] = mode_sele
             reuse_out = reuse_in;
         end
     end
-    % 前一半环计算完成后，参考像素并非全可用的状况不会再出现（对应解码端在解完一半环之后，会根据已重建像素解出未知的 1/4 部分，再继续后一半环）
-    % 故后一半环直接使用不带 nan 的 Seq_r 作为参考像素
 
+    % 后一半环直接使用底层右下角块的计算结果
+    prederr_blk_loop(PU / 2 + 1:PU, PU / 2 + 1:PU) = rb_loop_reuse.prederr_blk_loop;
+    pred_blk_loop(PU / 2 + 1:PU, PU / 2 + 1:PU) = rb_loop_reuse.pred_blk_loop;
+    mode_blk_loop(PU / 2 + 1:PU, PU / 2 + 1:PU) = rb_loop_reuse.mode_blk_loop;
     % 后一半环没有需要特殊处理的地方
     % 1110 模式下不需要计算后一半环
-    if (mask ~= 1110)
-        for k = (PU / 2):-1:4
-            [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);
+    % if (mask ~= 1110)
+    %     for k = (PU / 2):-1:4
+    %         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);
 
-            [Seq_r] = get_rebuild_loop(prederr_loop, pred_loop, i, j, k, PU, Seq_r);
+    %         [Seq_r] = get_rebuild_loop(prederr_loop, pred_loop, i, j, k, PU, Seq_r);
 
-            cnt = PU - k;
-            prederr_blk_loop(1 + cnt, 1 + cnt) = prederr_loop(k);
-            prederr_blk_loop(1 + cnt, 2 + cnt:PU) = prederr_loop(k + 1:end);
-            prederr_blk_loop(2 + cnt:PU, 1 + cnt) = prederr_loop(k - 1:-1:1);
-            pred_blk_loop(1 + cnt, 1 + cnt) = pred_loop(k);
-            pred_blk_loop(1 + cnt, 2 + cnt:PU) = pred_loop(k + 1:end);
-            pred_blk_loop(2 + cnt:PU, 1 + cnt) = pred_loop(k - 1:-1:1);
-            mode_blk_loop(1 + cnt, 1 + cnt) = mode_loop;
-            mode_blk_loop(1 + cnt, 2 + cnt:PU) = mode_loop;
-            mode_blk_loop(2 + cnt:PU, 1 + cnt) = mode_loop;
-        end
+    %         cnt = PU - k;
+    %         prederr_blk_loop(1 + cnt, 1 + cnt) = prederr_loop(k);
+    %         prederr_blk_loop(1 + cnt, 2 + cnt:PU) = prederr_loop(k + 1:end);
+    %         prederr_blk_loop(2 + cnt:PU, 1 + cnt) = prederr_loop(k - 1:-1:1);
+    %         pred_blk_loop(1 + cnt, 1 + cnt) = pred_loop(k);
+    %         pred_blk_loop(1 + cnt, 2 + cnt:PU) = pred_loop(k + 1:end);
+    %         pred_blk_loop(2 + cnt:PU, 1 + cnt) = pred_loop(k - 1:-1:1);
+    %         mode_blk_loop(1 + cnt, 1 + cnt) = mode_loop;
+    %         mode_blk_loop(1 + cnt, 2 + cnt:PU) = mode_loop;
+    %         mode_blk_loop(2 + cnt:PU, 1 + cnt) = mode_loop;
+    %     end
 
-        [prederr_3, pred_3, ~, mode_3] = mode_select_blk(Seq, Seq_r, i + PU - 3, j + PU - 3, 3);
-        prederr_blk_loop(PU - 2:PU, PU - 2:PU) = prederr_3;
-        pred_blk_loop(PU - 2:PU, PU - 2:PU) = pred_3;
-        mode_blk_loop(PU - 2:PU, PU - 2:PU) = mode_3;
-    end
+    %     [prederr_3, pred_3, ~, mode_3] = mode_select_blk(Seq, Seq_r, i + PU - 3, j + PU - 3, 3);
+    %     prederr_blk_loop(PU - 2:PU, PU - 2:PU) = prederr_3;
+    %     pred_blk_loop(PU - 2:PU, PU - 2:PU) = pred_3;
+    %     mode_blk_loop(PU - 2:PU, PU - 2:PU) = mode_3;
+    % end
 end

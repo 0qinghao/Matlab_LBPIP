@@ -5,10 +5,10 @@ load('./Luma.mat');
 log = Luma;
 filecnt = length(Luma);
 
-% for f = 1:filecnt
-% parfor f = [8:15]
-% parfor f = [3:25]
-for f = [22]
+for f = 6:filecnt
+    % parfor f = [8:15]
+    % parfor f = [3:25]
+    % for f = [22]
     tic
 
     srcy = Luma(f).Ydata;

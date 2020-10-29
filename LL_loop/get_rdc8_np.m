@@ -1,5 +1,5 @@
 % 应用新分块方法编码一个 8x8 块
-function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc8_np(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_deep_layer, rdc_ind, rdc_deep_layer_res_part)
+function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part, rb_loop_reuse] = get_rdc8_np(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_deep_layer, rdc_ind, rdc_deep_layer_res_part, rb_loop_reuse_deep_layer)
     PU = 8; %4 8 16 32 64
     mask_mat = [1111, 0111, 1011, 1101, 1110];
     for i = 1:5
@@ -10,7 +10,7 @@ function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc8_np
     % loop 部分
     reuse_part = nan;
     for i = 1:5
-        [prederr_blk_loop_m{i}, pred_blk_loop_m{i}, mode_blk_loop_m{i}, reuse_part] = mode_select_loop_np(img_src, img_rebuild, x, y, PU, mask{i}, reuse_part);
+        [prederr_blk_loop_m{i}, pred_blk_loop_m{i}, mode_blk_loop_m{i}, reuse_part] = mode_select_loop_np(img_src, img_rebuild, x, y, PU, mask{i}, reuse_part, rb_loop_reuse_deep_layer);
         % img_rebuild_temp_loop = prederr_blk_loop + pred_blk_loop;
         mode_frame_temp_loop_m{i} = fill_blk_np(mode_frame, x, y, PU, mode_blk_loop_m{i}, pred_range{i});
         mode_bits_loop = cal_loop_mode_bits_np(mode_blk_loop_m{i}, mode_frame_temp_loop_m{i}, x, y, mask{i});
@@ -70,4 +70,7 @@ function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc8_np
     end
     %assert(all(img_rebuild_temp_blk == img_rebuild_temp_loop, [1, 2]))
     % img_rebuild_temp(x:x + PU - 1, y:y + PU - 1) = img_rebuild_temp_blk;
+    rb_loop_reuse.prederr_blk_loop = prederr_blk_loop_m{1};
+    rb_loop_reuse.pred_blk_loop = pred_blk_loop_m{1};
+    rb_loop_reuse.mode_blk_loop = mode_blk_loop_m{1};
 end

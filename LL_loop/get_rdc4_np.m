@@ -1,7 +1,7 @@
 % 应用新分块方法编码一个 4x4 块
 % 新分块方法在 4x4 层没有体现
 % 环状做到 3x3
-function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc4_np(x, y, img_src, img_rebuild, split_frame, mode_frame)
+function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part, rb_loop_reuse] = get_rdc4_np(x, y, img_src, img_rebuild, split_frame, mode_frame)
     PU = 4; %4 8 16 32 64
 
     % loop 部分
@@ -34,4 +34,8 @@ function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc4_np
     split_frame(x:x + PU - 1, y:y + PU - 1) = PU;
     %assert(all(img_rebuild_temp_blk == img_rebuild_temp_loop, [1, 2]))
     img_rebuild(x:x + PU - 1, y:y + PU - 1) = img_rebuild_temp_blk;
+
+    rb_loop_reuse.prederr_blk_loop = prederr_blk_loop;
+    rb_loop_reuse.pred_blk_loop = pred_blk_loop;
+    rb_loop_reuse.mode_blk_loop = mode_blk_loop;
 end
