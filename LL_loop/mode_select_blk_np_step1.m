@@ -1,5 +1,6 @@
 % 新分块方法下，块状预测一个块
-function [prederr, pred, sae, mode] = mode_select_blk_np(Seq, Seq_r, i, j, PU, pred_range)
+% step1: 产生 35 个预测值
+function [pred_pixels, dst] = mode_select_blk_np_step1(Seq, Seq_r, i, j, PU)
     dst = Seq(i:i + PU - 1, j:j + PU - 1);
     if (i == 1 || j == 1)
         lt = nan;
@@ -58,15 +59,4 @@ function [prederr, pred, sae, mode] = mode_select_blk_np(Seq, Seq_r, i, j, PU, p
     pred_pixels{33} = Intra_Angular{31};
     pred_pixels{34} = Intra_Angular{32};
     pred_pixels{35} = Intra_Angular{33};
-
-    for m = 1:35
-        prederr_all{m} = dst - pred_pixels{m};
-
-        prederr_for_cal_sae = prederr_all{m};
-        % 并不是所有的预测点都参与 SAE 计算
-        sae_all(m) = sum(abs(prederr_for_cal_sae(pred_range)));
-    end
-    [sae, mode] = min(sae_all);
-    prederr = prederr_all{mode};
-    pred = pred_pixels{mode};
 end

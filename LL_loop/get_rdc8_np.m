@@ -8,8 +8,9 @@ function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc8_np
     end
 
     % loop 部分
+    reuse_part = nan;
     for i = 1:5
-        [prederr_blk_loop_m{i}, pred_blk_loop_m{i}, mode_blk_loop_m{i}] = mode_select_loop_np(img_src, img_rebuild, x, y, PU, mask{i});
+        [prederr_blk_loop_m{i}, pred_blk_loop_m{i}, mode_blk_loop_m{i}, reuse_part] = mode_select_loop_np(img_src, img_rebuild, x, y, PU, mask{i}, reuse_part);
         % img_rebuild_temp_loop = prederr_blk_loop + pred_blk_loop;
         mode_frame_temp_loop_m{i} = fill_blk_np(mode_frame, x, y, PU, mode_blk_loop_m{i}, pred_range{i});
         mode_bits_loop = cal_loop_mode_bits_np(mode_blk_loop_m{i}, mode_frame_temp_loop_m{i}, x, y, mask{i});
@@ -29,8 +30,9 @@ function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc8_np
     % loop 部分
 
     % blk 部分
+    [pred_all35, pred_target] = mode_select_blk_np_step1(img_src, img_rebuild, x, y, PU);
     for i = 1:5
-        [prederr_blk_m{i}, pred_blk_m{i}, ~, mode_blk_m{i}] = mode_select_blk_np(img_src, img_rebuild, x, y, PU, pred_range{i});
+        [prederr_blk_m{i}, pred_blk_m{i}, ~, mode_blk_m{i}] = mode_select_blk_np_step2(pred_all35, pred_target, pred_range{i});
         % img_rebuild_temp_blk = prederr_blk + pred_blk;
         mode_frame_temp_blk_m{i} = fill_blk_np(mode_frame, x, y, PU, mode_blk_m{i}, pred_range{i});
         mode_bits = get_mode_bits_blk_np(0, mode_frame_temp_blk_m{i}, x, y, mask{i}, PU);
