@@ -1,4 +1,4 @@
-% 切割 CTU, 得坐标
+% 切割 CTU 保存每个 CTU 的坐标
 function [CTU, src_double] = split_CTU(srcy)
     [h, w] = size(srcy);
 

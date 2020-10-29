@@ -1,3 +1,5 @@
+% 提取出 PU*PU 大小块中的第 k 环数据
+% 按顺时针方式排列为一维
 function [dst_1d] = get_dst_k_loop(dst, k, PU)
     cnt = PU - k + 1;
     if (k ~= 1)

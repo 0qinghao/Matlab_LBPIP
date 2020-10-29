@@ -1,12 +1,14 @@
-% loop 模式中的 top 和 left 仅是预测块上方和左方的内容，并没有右上角左下角的扩展
+% loop 模式下 33 个角度方式的预测
 function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, BlockSize)
 
+    % 环状模式下并不需要计算整个块的预测值，仅需计算下列 index 的预测值
     single_loop_index = [[4 * BlockSize + 2:5 * BlockSize + 1], [5 * BlockSize + 2:BlockSize:(BlockSize + 3) * BlockSize + 2]];
 
     top = Top_Pixels_t;
-    top(end + 1:2 * BlockSize + 1) = Top_Pixels_t(end);
+    % 补全长度方便代码运行，实际上补充的内容不可能被用于环状的预测值计算
+    top(end + 1:2 * BlockSize + 1) = nan;
     left = Left_Pixels_t;
-    left(end + 1:2 * BlockSize + 1) = Left_Pixels_t(end);
+    left(end + 1:2 * BlockSize + 1) = nan;
 
     intraPredAngleSet = [NaN, NaN, ...% Planar, DC
                     32, 26, 21, 17, 13, 9, 5, 2, 0, -2, -5, -9, -13, -17, -21, -26, ...%INTRA_ANGULAR2 ~ INTRA_ANGULAR17
@@ -243,6 +245,7 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
             TOP = pred_pix(1, 2:BlockSize);
             LEFT = pred_pix(2:BlockSize, 1);
             TOPLEFT = pred_pix(1, 1);
+            % predModeIntra = 2 是 第1个角度模式
             pred_1d{predModeIntra - 1} = [LEFT(end:-1:1)', TOPLEFT, TOP];
         else
             pred_1d{predModeIntra - 1} = pred_pix(1, 1);

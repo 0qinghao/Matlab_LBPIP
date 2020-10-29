@@ -1,3 +1,5 @@
+% 环状编码一个块，做到 4x4 为止
+% 最后 4x4 用 HEVC 方法完成
 function [prederr_blk_loop, pred_blk_loop, mode_blk_loop] = mode_select_loop(Seq, Seq_r, i, j, PU)
     for k = PU:-1:5
         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);

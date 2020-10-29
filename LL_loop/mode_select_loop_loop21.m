@@ -1,3 +1,4 @@
+% 环状方式编码一个块，一直做到 1x1
 function [prederr_blk_loop, pred_blk_loop, mode_blk_loop] = mode_select_loop_loop21(Seq, Seq_r, i, j, PU)
     for k = PU:-1:1
         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);

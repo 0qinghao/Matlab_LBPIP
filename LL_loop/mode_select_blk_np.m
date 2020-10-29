@@ -1,3 +1,4 @@
+% 新分块方法下，块状预测一个块
 function [prederr, pred, sae, mode] = mode_select_blk_np(Seq, Seq_r, i, j, PU, pred_range)
     dst = Seq(i:i + PU - 1, j:j + PU - 1);
     if (i == 1 || j == 1)
@@ -62,6 +63,7 @@ function [prederr, pred, sae, mode] = mode_select_blk_np(Seq, Seq_r, i, j, PU, p
         prederr_all{m} = dst - pred_pixels{m};
 
         prederr_for_cal_sae = prederr_all{m};
+        % 并不是所有的预测点都参与 SAE 计算
         sae_all(m) = sum(abs(prederr_for_cal_sae(pred_range)));
     end
     [sae, mode] = min(sae_all);

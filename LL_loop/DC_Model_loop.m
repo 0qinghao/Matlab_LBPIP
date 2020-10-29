@@ -1,3 +1,5 @@
+% 环状模式下的 DC 预测
+% 仅计算正上方和正左方的均值（是否合理？）
 % function [TOP, LEFT, TOPLEFT] = DC_Model_loop(PU, PX, PY)
 function [pred_1d] = DC_Model_loop(PU, PX, PY)
 
@@ -9,7 +11,6 @@ function [pred_1d] = DC_Model_loop(PU, PX, PY)
 
     % Output:
     %   Intra_DC : DC Predicted Output PU
-    % TODO: 没有用上左上角那个，有必要用上吗？
     dc_Val = round((sum(PY(2:PU + 1)) + sum(PX(2:PU + 1))) / 2 / PU);
 
     if (PU ~= 1)

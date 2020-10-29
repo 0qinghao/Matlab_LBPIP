@@ -1,3 +1,4 @@
+% 环状模式下 重建一个环
 function [Seq_r] = get_rebuild_loop(prederr, pred, i, j, k, PU, Seq_r)
     rebuild_loop = pred + prederr;
 

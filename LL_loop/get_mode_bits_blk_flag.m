@@ -1,7 +1,5 @@
-% 新分块方法下，判断 i,j 位置块的模式信息需要用几 bits 编码
-% 0111 分块模式下，当前块的模式不能直接从 i,j 取
-% function [flag, Y, Z] = get_mode_bits_blk_np(D, mode_all, i, j)
-function [mode_bits] = get_mode_bits_blk_np(D, mode_all, i, j, mask, PU)
+% 判断 i,j 位置块的模式信息需要用几 bits 编码
+function [nflag] = get_mode_bits_blk_flag(D, mode_all, i, j)
     if (i > 1 && j > 1)
         A = mode_all(i, j - 1) - 1;
         B = mode_all(i - 1, j) - 1;
@@ -14,14 +12,10 @@ function [mode_bits] = get_mode_bits_blk_np(D, mode_all, i, j, mask, PU)
     else
         A = 0; B = 0;
     end
-    switch mask
-        case {1111, 1011, 1101, 1110}
-            % 主体程序中用 1-35 记录模式，对应本文件中的 0-34 模式
-            C = mode_all(i, j) - 1;
-        case 0111
-            C = mode_all(i + PU - 1, j) - 1;
-    end
+    % 主体程序中用 1-35 记录模式，对应本文件中的 0-34 模式
+    C = mode_all(i, j) - 1;
     candModeList = [0, 0, 0];
+
     % a = 0;
     if (A == B)
         if (A == 0 || A == 1)
@@ -71,6 +65,13 @@ function [mode_bits] = get_mode_bits_blk_np(D, mode_all, i, j, mask, PU)
         % end
         flag = 0;
         % Y = C - a;
+    end
+    nflag = ~flag;
+
+    if flag
+        mode_bits = 3;
+    else
+        mode_bits = 6;
     end
     % switch C
     %     case 0
@@ -149,10 +150,4 @@ function [mode_bits] = get_mode_bits_blk_np(D, mode_all, i, j, mask, PU)
     %                 Z = 7;
     %         end
     % end
-
-    if flag
-        mode_bits = 3;
-    else
-        mode_bits = 6;
-    end
 end

@@ -1,3 +1,5 @@
+% 环状模式预测一个块，环状做到剩下 2*2 块
+% 最后的 2*2 块使用标准块状方式完成
 function [prederr_blk_loop, pred_blk_loop, mode_blk_loop] = mode_select_loop_loop22(Seq, Seq_r, i, j, PU)
     for k = PU:-1:3
         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);

@@ -1,3 +1,5 @@
+% 新分块方法下，使用换装方法预测一个块
+% 根据模式，有可能出现前一半环参考像素并非全可用的状况，所以前半后半需要分开考虑
 function [prederr_blk_loop, pred_blk_loop, mode_blk_loop] = mode_select_loop_np(Seq, Seq_r, i, j, PU, mask)
     for k = PU:-1:(PU / 2 + 1)
         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop_np(Seq, Seq_r, i, j, k, PU, mask);
@@ -16,6 +18,7 @@ function [prederr_blk_loop, pred_blk_loop, mode_blk_loop] = mode_select_loop_np(
         mode_blk_loop(2 + cnt:PU, 1 + cnt) = mode_loop;
     end
 
+    % 后一半环没有需要特殊处理的地方
     for k = (PU / 2):-1:4
         [prederr_loop, pred_loop, ~, mode_loop] = select_single_loop(Seq, Seq_r, i, j, k, PU);
 

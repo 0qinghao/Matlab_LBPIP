@@ -1,3 +1,5 @@
+% 新分块方法下，根据模式，提取出需要在当前层预测的点的索引值
+% 按 ↓↓↓ 的方式排序（TODO: 是否合理？）
 function pred_range = get_pred_range(PU, mask)
     all_range_1d = 1:PU^2;
     switch mask

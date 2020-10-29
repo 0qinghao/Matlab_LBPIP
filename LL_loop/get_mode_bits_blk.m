@@ -1,21 +1,22 @@
 % 判断 i,j 位置块的模式信息需要用几 bits 编码
 function mode_bits = get_mode_bits_blk(D, mode_all, i, j)
     if (i > 1 && j > 1)
-        A = mode_all(i, j - 1);
-        B = mode_all(i - 1, j);
+        A = mode_all(i, j - 1) - 1;
+        B = mode_all(i - 1, j) - 1;
     elseif (i > 1)
         A = 0;
-        B = mode_all(i - 1, j);
+        B = mode_all(i - 1, j) - 1;
     elseif (j > 1)
-        A = mode_all(i, j - 1);
+        A = mode_all(i, j - 1) - 1;
         B = 0;
     else
         A = 0; B = 0;
     end
-    C = mode_all(i, j);
+    % 主体程序中用 1-35 记录模式，对应本文件中的 0-34 模式
+    C = mode_all(i, j) - 1;
     candModeList = [0, 0, 0];
 
-    a = 0;
+    % a = 0;
     if (A == B)
         if (A == 0 || A == 1)
             candModeList(1) = 0;
@@ -45,22 +46,24 @@ function mode_bits = get_mode_bits_blk(D, mode_all, i, j)
             candModeList(3) = 26;
         end
     end
-    if (C == candModeList(1))
-        flag = 0;
-        % Y = 0;
-    elseif (C == candModeList(2))
-        flag = 0;
-        % Y = 1;
-    elseif (C == candModeList(3))
-        flag = 0;
-        % Y = 2;
-    else
-        for i = 1:3
-            if (C >= candModeList(i))
-                a = a +1;
-            end
-        end
+    % if (C == candModeList(1))
+    %     flag = 0;
+    % Y = 0;
+    % elseif (C == candModeList(2))
+    % flag = 0;
+    % Y = 1;
+    % elseif (C == candModeList(3))
+    % flag = 0;
+    % Y = 2;
+    if any(C == candModeList)
         flag = 1;
+    else
+        % for i = 1:3
+        %     if (C >= candModeList(i))
+        %         a = a +1;
+        %     end
+        % end
+        flag = 0;
         % Y = C - a;
     end
 

@@ -1,8 +1,8 @@
+% 新分块方法下，前一半环的预测过程
 function [prederr, pred, sae, mode] = select_single_loop_np(Seq, Seq_r, i, j, k, PU, mask)
     dst = Seq(i:i + PU - 1, j:j + PU - 1);
     [dst_1d] = get_dst_k_loop(dst, k, PU);
     [PX, PY] = get_px_py(Seq_r, i, j, k, PU);
-    [PX, PY] = fill_PXPY_nan(PX, PY);
     % Intra DC Prediction
     [pred_dc] = DC_Model_loop(k, PX, PY);
     % Intra Planar Prediction
@@ -48,8 +48,9 @@ function [prederr, pred, sae, mode] = select_single_loop_np(Seq, Seq_r, i, j, k,
         prederr_all{m} = dst_1d - pred_pixels{m};
 
         prederr_full_loop = prederr_all{m};
+        % 在前一半环状中，不同模式下，需要计算预测残差的对象不同
         switch mask
-            case 1111
+            case {1111, 1110}
                 prederr_for_cal_sae = prederr_full_loop;
             case 0111
                 prederr_for_cal_sae = prederr_full_loop([1:PU / 2, end - (PU / 2 - 1):end]);
@@ -57,8 +58,6 @@ function [prederr, pred, sae, mode] = select_single_loop_np(Seq, Seq_r, i, j, k,
                 prederr_for_cal_sae = prederr_full_loop([1:end - PU / 2]);
             case 1101
                 prederr_for_cal_sae = prederr_full_loop([PU / 2 + 1:end]);
-            case 1110
-                prederr_for_cal_sae = prederr_full_loop;
         end
         sae_all(m) = sum(abs(prederr_for_cal_sae));
     end

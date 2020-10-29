@@ -1,3 +1,5 @@
+% 编码单个 CTU
+% 环状做到 2x2
 function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU_comb_loop22(CTU, img_src, img_rebuild, split_frame, mode_frame)
 
     [z_ind_x_mat, z_ind_y_mat, z_size_mat, rdc_ind_mat] = gen_z_mat();

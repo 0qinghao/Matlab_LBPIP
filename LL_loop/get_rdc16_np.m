@@ -1,4 +1,4 @@
-function [img_rebuild, split_frame, mode_frame, rdc] = get_rdc16_np(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_deep_layer, rdc_ind)
+function [img_rebuild, split_frame, mode_frame, rdc, rdc_res_part] = get_rdc16_np(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_deep_layer, rdc_ind, rdc_deep_layer_res_part)
     PU = 16; %4 8 16 32 64
     mask_mat = [1111, 0111, 1011, 1101, 1110];
     for i = 1:5
@@ -12,11 +12,14 @@ function [img_rebuild, split_frame, mode_frame, rdc] = get_rdc16_np(x, y, img_sr
         % img_rebuild_temp_loop = prederr_blk_loop + pred_blk_loop;
         mode_frame_temp_loop_m{i} = fill_blk_np(mode_frame, x, y, PU, mode_blk_loop_m{i}, pred_range{i});
         mode_bits_loop = cal_loop_mode_bits_np(mode_blk_loop_m{i}, mode_frame_temp_loop_m{i}, x, y, mask{i});
-        rdc_curr_temp_loop_m(i) = cal_rdc_np(prederr_blk_loop_m{i}, mode_bits_loop, pred_range{i}, rdc_deep_layer, rdc_ind, mask{i});
+        [rdc_curr_temp_loop_m(i), rdc_res_part_temp_loop_m(i)] = cal_rdc_np(prederr_blk_loop_m{i}, mode_bits_loop, pred_range{i}, rdc_deep_layer, rdc_ind, mask{i}, rdc_deep_layer_res_part);
     end
     [rdc_curr_temp_loop, mask_loop_ind] = min(rdc_curr_temp_loop_m);
     mode_frame_temp_loop = mode_frame_temp_loop_m{mask_loop_ind};
     pred_range_rdo_loop = pred_range{mask_loop_ind};
+    rdc_res_part_loop = rdc_res_part_temp_loop_m(mask_loop_ind);
+    % 新分块方法下，分块信息记录有些不同
+    % e.g. 新分块方法下，在分块信息记录中用 9 填充一个 16*16 块的 L 形区域，表示该区域属于 16*16 的范围，剩下的 1/4 保留底层分块模式
     if mask_loop_ind ~= 1
         split_fill_loop = PU / 2 + 1;
     else
@@ -30,11 +33,12 @@ function [img_rebuild, split_frame, mode_frame, rdc] = get_rdc16_np(x, y, img_sr
         % img_rebuild_temp_blk = prederr_blk + pred_blk;
         mode_frame_temp_blk_m{i} = fill_blk_np(mode_frame, x, y, PU, mode_blk_m{i}, pred_range{i});
         mode_bits = get_mode_bits_blk_np(0, mode_frame_temp_blk_m{i}, x, y, mask{i}, PU);
-        rdc_curr_temp_blk_m(i) = cal_rdc_np(prederr_blk_m{i}, mode_bits, pred_range{i}, rdc_deep_layer, rdc_ind, mask{i});
+        [rdc_curr_temp_blk_m(i), rdc_res_part_temp_blk_m(i)] = cal_rdc_np(prederr_blk_m{i}, mode_bits, pred_range{i}, rdc_deep_layer, rdc_ind, mask{i}, rdc_deep_layer_res_part);
     end
     [rdc_curr_temp_blk, mask_blk_ind] = min(rdc_curr_temp_blk_m);
     mode_frame_temp_blk = mode_frame_temp_blk_m{mask_blk_ind};
     pred_range_rdo_blk = pred_range{mask_blk_ind};
+    rdc_res_part_blk = rdc_res_part_temp_blk_m(mask_blk_ind);
     if mask_blk_ind ~= 1
         split_fill_blk = PU / 2 + 1;
     else
@@ -44,17 +48,20 @@ function [img_rebuild, split_frame, mode_frame, rdc] = get_rdc16_np(x, y, img_sr
 
     rdc_deep = sum(rdc_deep_layer(rdc_ind * 4 - 3:rdc_ind * 4));
     if (min(rdc_curr_temp_blk, rdc_curr_temp_loop) <= rdc_deep)
-        if (rdc_curr_temp_loop < rdc_curr_temp_blk)
+        if (rdc_curr_temp_loop <= rdc_curr_temp_blk)
             rdc = rdc_curr_temp_loop;
             mode_frame = mode_frame_temp_loop;
             split_frame = fill_blk_np(split_frame, x, y, PU, split_fill_loop, pred_range_rdo_loop);
+            rdc_res_part = rdc_res_part_loop;
         else
             rdc = rdc_curr_temp_blk;
             mode_frame = mode_frame_temp_blk;
             split_frame = fill_blk_np(split_frame, x, y, PU, split_fill_blk, pred_range_rdo_blk);
+            rdc_res_part = rdc_res_part_blk;
         end
     else
         rdc = rdc_deep;
+        rdc_res_part = sum(rdc_deep_layer_res_part(rdc_ind * 4 - 3:rdc_ind * 4));
         % mode_frame 保持不变
         % split_frame 保持不变
     end

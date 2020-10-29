@@ -1,6 +1,5 @@
+% 新分块方法下，填充模式信息、分块信息需要根据具体模式确定，不能全填
 function blk_all = fill_blk_np(blk_all, x, y, N, data, pred_range)
-    %UNTITLED3 此处显示有关此函数的摘要
-    %   此处显示详细说明
     % for i = a:a + N - 1
     %     for j = b:b + N - 1
     %         mode_all(i, j) = mode;
