@@ -1,8 +1,8 @@
 % 新分块方法下，使用换装方法预测一个块
 % 根据模式，有可能出现前一半环参考像素并非全可用的状况，所以前半后半需要分开考虑
 function [prederr_blk_loop, pred_blk_loop, mode_blk_loop, reuse_out] = mode_select_loop_np(Seq, Seq_r, i, j, PU, mask, reuse_in)
-    % 前一半环 1111 0111 1110 模式的结果是一样的，可以保留 1111 的计算结果复用（1111模式最先算），节省运算时间
-    if (mask == 0111 || mask == 1110)
+    % 前一半环 1111 1110 模式的结果是一样的，可以保留 1111 的计算结果复用（1111模式最先算），节省运算时间
+    if (mask == 1110)
         prederr_blk_loop = reuse_in.prederr_blk_loop;
         pred_blk_loop = reuse_in.pred_blk_loop;
         mode_blk_loop = reuse_in.mode_blk_loop;
@@ -25,7 +25,7 @@ function [prederr_blk_loop, pred_blk_loop, mode_blk_loop, reuse_out] = mode_sele
             mode_blk_loop(1 + cnt, 2 + cnt:PU) = mode_loop;
             mode_blk_loop(2 + cnt:PU, 1 + cnt) = mode_loop;
         end
-        % 前一半环 1111 0111 1110 模式的结果是一样的，可以保留 1111 的计算结果复用，节省运算时间
+        % 前一半环 1111 1110 模式的结果是一样的，可以保留 1111 的计算结果复用，节省运算时间
         if (mask == 1111)
             reuse_out.prederr_blk_loop = prederr_blk_loop;
             reuse_out.pred_blk_loop = pred_blk_loop;
