@@ -5,9 +5,9 @@ load('./Luma.mat');
 log = Luma;
 filecnt = length(Luma);
 
-for f = 6:filecnt
-    % parfor f = [8:15]
-    % parfor f = [3:25]
+% for f = 3:3
+% parfor f = [8:15]
+parfor f = 3:filecnt
     % for f = [22]
     tic
 
@@ -67,4 +67,4 @@ for f = 6:filecnt
 
 end
 
-save('./allLOG.mat', 'log');
+save('./allLOG_np.mat', 'log');

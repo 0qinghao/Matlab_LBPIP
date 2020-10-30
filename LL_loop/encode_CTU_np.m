@@ -33,7 +33,7 @@ function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU_np(CTU, i
 
     % 计算分块信息所需 bits, 包含了每个块使用块状/环状，外部不用另计该部分信息
     CTU_split_tree_bits = gettreesize(split_frame(CTU.x:CTU.x + 63, CTU.y:CTU.y + 63), 64);
-    new_mode_bits = getnewsize(mode_frame, split_frame, 64, CTU.x, CTU.y);
+    new_mode_bits = get_ctu_mode_bits(mode_frame, split_frame, 64, CTU.x, CTU.y, 3);
     CTU_bits = rdc_64_res_part + CTU_split_tree_bits + new_mode_bits;
     % CTU_bits = rdc_64 + CTU_split_tree_bits;
 
