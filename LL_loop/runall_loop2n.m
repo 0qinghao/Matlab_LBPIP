@@ -1,17 +1,17 @@
 % 测试脚本入口
 % 编码所有测试序列第一帧的亮度分量
 
-load('./Luma.mat');
-log = Luma;
-filecnt = length(Luma);
+load('./Luma_sort.mat');
+log = Luma_sort;
+filecnt = length(log);
 
-% for f = 1:1
+% for f = 3:3
 % parfor f = [8:15]
-parfor f = 3:filecnt
+parfor f = 1:filecnt - 2
     % for f = [22]
     tic
 
-    srcy = Luma(f).Ydata;
+    srcy = Luma_sort(f).Ydata;
 
     % [size_all_b, blk_size_sum_b, split_frame_b, mode_frame_b, CTU_bits_all_b] = encode_main_blk(srcy);
     [size_all_c_loop21, blk_size_sum_c_loop21, split_frame_c_loop21, mode_frame_c_loop21, CTU_bits_all_c_loop21] = encode_main_comb_loop21(srcy);
