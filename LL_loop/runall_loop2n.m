@@ -7,7 +7,7 @@ filecnt = length(log);
 
 % for f = 3:3
 % parfor f = [8:15]
-parfor f = 1:filecnt - 2
+parfor f = 1:filecnt
     % for f = [22]
     tic
 
@@ -19,7 +19,6 @@ parfor f = 1:filecnt - 2
     [size_all_c_loop23, blk_size_sum_c_loop23, split_frame_c_loop23, mode_frame_c_loop23, CTU_bits_all_c_loop23] = encode_main_comb_loop23(srcy);
     [size_all_c_loop24, blk_size_sum_c_loop24, split_frame_c_loop24, mode_frame_c_loop24, CTU_bits_all_c_loop24] = encode_main_comb_loop24(srcy);
     % [size_all_np, blk_size_sum_np, split_frame_np, mode_frame_np, CTU_bits_all_np] = encode_main_np(srcy);
-    % 完全没有环状模式，仅应用新分块方法的测试入口；代码有问题，暂不测试
     % [size_all_np_b, blk_size_sum_np_b, split_frame_np_b, mode_frame_np_b, CTU_bits_all_np_b] = encode_main_np_blk(srcy);
 
     % log(f).size_block = size_all_b;

@@ -1,3 +1,10 @@
+% 应用新分块方法 + 仅做块状的测试入口
+% 新分块方法：顶层搜索时允许保留 1/4 底层结果的分块方法
+% 1111: 不保留底层结果
+% 0111: 保留左上角底层结果
+% 1011: 保留右上角
+% 1101: 保留左下角
+% 1110: 右下角
 function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_main_np_blk(srcy)
     initGlobals(100);
 
@@ -8,7 +15,7 @@ function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_ma
     mode_frame = nan(h, w);
 
     for i = 1:numel(CTU)
-        % for i = 1:3
+        % for i = 1:2
         i
         [CTU_bits(i), img_rebuild, split_frame, mode_frame] = encode_CTU_np_blk(CTU(i), img_src, img_rebuild, split_frame, mode_frame);
     end
