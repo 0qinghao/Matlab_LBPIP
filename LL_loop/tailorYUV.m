@@ -27,12 +27,18 @@ for i = 1:length(subdir)
 end
 
 for k = 1:length(f)%因为时间有点长就测试了前两个,实际操作赢使用length(f)
-    [Y, ~, ~] = yuvRead(fullfile(maindir, f(k).subdir, f(k).filename), f(k).width, f(k).height, f(k).nFrame);
+    [Y, U, V] = yuvRead(fullfile(maindir, f(k).subdir, f(k).filename), f(k).width, f(k).height, f(k).nFrame);
     Y = Y(1:floor(f(k).height / 64) * 64, 1:floor(f(k).width / 64) * 64); %将宽和高截取为64的整数倍
-    Ydata{k, 1} = Y;
-    Luma(k).filename = f(k).filename; %将当前yuv文件的名称、类别、截取后数据、截取前实际宽高存入结构体
-    Luma(k).class = f(k).subdir;
-    Luma(k).Ydata = Ydata{k, 1};
-    Luma(k).width = f(k).width;
-    Luma(k).height = f(k).height;
+    U = U(1:floor(f(k).height / 64/2) * 64, 1:floor(f(k).width / 64/2) * 64); %将宽和高截取为64的整数倍
+    V = V(1:floor(f(k).height / 64/2) * 64, 1:floor(f(k).width / 64/2) * 64); %将宽和高截取为64的整数倍
+    Ydata{k} = Y;
+    Udata{k} = U;
+    Vdata{k} = V;
+    YUV(k).filename = f(k).filename; %将当前yuv文件的名称、类别、截取后数据、截取前实际宽高存入结构体
+    YUV(k).class = f(k).subdir;
+    YUV(k).Ydata = Ydata{k};
+    YUV(k).Udata = Udata{k};
+    YUV(k).Vdata = Vdata{k};
+    YUV(k).width = f(k).width;
+    YUV(k).height = f(k).height;
 end

@@ -33,8 +33,7 @@ function [CTU_bits, CTU_split_tree_bits, type_cnt, img_rebuild, split_frame, mod
 
     % 计算分块信息所需 bits, 包含了每个块使用块状/环状，外部不用另计该部分信息
     [CTU_split_tree_bits, type_cnt] = get_tree_size_np(loop_flag_frame, split_frame, CTU.x, CTU.y, 64);
-    new_mode_bits = get_ctu_mode_bits_np(mode_frame, split_frame, loop_flag_frame, 64, CTU.x, CTU.y, 3);
+    % new_mode_bits = get_ctu_mode_bits_np_backup(mode_frame, split_frame, loop_flag_frame, 64, CTU.x, CTU.y, 3);
+    new_mode_bits = get_ctu_mode_bits_np(mode_frame, split_frame, loop_flag_frame, CTU.x, CTU.y, 64);
     CTU_bits = rdc_64_res_part + CTU_split_tree_bits + new_mode_bits;
-    % CTU_bits = rdc_64 + CTU_split_tree_bits;
-
 end

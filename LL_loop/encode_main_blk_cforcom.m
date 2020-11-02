@@ -15,7 +15,7 @@ function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_ma
     mode_frame = nan(h, w);
 
     % for i = 1:numel(CTU)
-    for i = 1:2
+    for i = 1:3
         i
         [CTU_bits(i), img_rebuild, split_frame, mode_frame] = encode_CTU(CTU(i), img_src, img_rebuild, split_frame, mode_frame);
     end

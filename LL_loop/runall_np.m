@@ -7,9 +7,9 @@ filecnt = length(log);
 
 % for f = 3:3
 % parfor f = [8:15]
-% parfor f = 1:filecnt - 2
-% for f = [22]
-parfor f = 19:22
+parfor f = 1:filecnt
+    % for f = [22]
+    % parfor f = 19:22
     tic
 
     srcy = Luma_sort(f).Ydata;

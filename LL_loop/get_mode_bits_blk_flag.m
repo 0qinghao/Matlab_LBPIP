@@ -1,19 +1,19 @@
 % 判断 i,j 位置块的模式信息需要用几 bits 编码
 function [nflag] = get_mode_bits_blk_flag(D, mode_all, i, j)
     if (i > 1 && j > 1)
-        A = mode_all(i, j - 1) - 1;
-        B = mode_all(i - 1, j) - 1;
+        A = mode_all(i, j - 1);
+        B = mode_all(i - 1, j);
     elseif (i > 1)
         A = 0;
-        B = mode_all(i - 1, j) - 1;
+        B = mode_all(i - 1, j);
     elseif (j > 1)
-        A = mode_all(i, j - 1) - 1;
+        A = mode_all(i, j - 1);
         B = 0;
     else
         A = 0; B = 0;
     end
     % 主体程序中用 1-35 记录模式，对应本文件中的 0-34 模式
-    C = mode_all(i, j) - 1;
+    C = mode_all(i, j);
     candModeList = [0, 0, 0];
 
     % a = 0;
