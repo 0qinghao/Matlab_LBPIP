@@ -1,3 +1,8 @@
+% 使用 35 种预测方式预测一个环形区域，得到
+% 预测残差
+% 预测值
+% SAE
+% 模式
 function [prederr, pred, sae, mode] = select_single_loop(Seq, Seq_r, i, j, k, PU)
     dst = Seq(i:i + PU - 1, j:j + PU - 1);
     [dst_1d] = get_dst_k_loop(dst, k, PU);

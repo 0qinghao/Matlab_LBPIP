@@ -1,3 +1,5 @@
+% »·×´Ä£Ê½ÏÂµÄ DC Ô¤²â
+% ½ö¼ÆËãÕıÉÏ·½ºÍÕı×ó·½µÄ¾ùÖµ£¨ÊÇ·ñºÏÀí£¿£©
 % function [TOP, LEFT, TOPLEFT] = DC_Model_loop(PU, PX, PY)
 function [pred_1d] = DC_Model_loop(PU, PX, PY)
 
@@ -9,7 +11,6 @@ function [pred_1d] = DC_Model_loop(PU, PX, PY)
 
     % Output:
     %   Intra_DC : DC Predicted Output PU
-    % TODO: æ²¡æœ‰ç”¨ä¸Šå·¦ä¸Šè§’é‚£ä¸ªï¼Œæœ‰å¿…è¦ç”¨ä¸Šå—ï¼Ÿ
     dc_Val = round((sum(PY(2:PU + 1)) + sum(PX(2:PU + 1))) / 2 / PU);
 
     if (PU ~= 1)

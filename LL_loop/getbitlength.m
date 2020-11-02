@@ -1,3 +1,4 @@
+% 计算记录分块信息四叉树需要的 bits
 function split_bit_len = getbitlength(s_mat)
     cnt4 = sum(sum(s_mat == 4)) / (4 * 4);
     cnt8 = sum(sum(s_mat == 8)) / (8 * 8);

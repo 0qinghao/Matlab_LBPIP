@@ -1,4 +1,8 @@
-function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
+% HEVC 标准 33 个角度预测值
+function [Intra_Angular] = Intra_Angular_Model(top, left, nS)
+    ref(1:2 * nS + 1) = left';
+    ref(2 * nS + 2:4 * nS + 1) = top(2:end);
+    ref = ref';
 
     intraPredAngleSet = [NaN, NaN, ...% Planar, DC
                     32, 26, 21, 17, 13, 9, 5, 2, 0, -2, -5, -9, -13, -17, -21, -26, ...%INTRA_ANGULAR2 ~ INTRA_ANGULAR17
@@ -6,7 +10,6 @@ function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
 
     % invAngleSet = round( 2^13./intraPredAngleSet );
     invAngleSet = [NaN NaN 256 315 390 482 630 910 1638 4096 Inf -4096 -1638 -910 -630 -482 -390 -315 -256 -315 -390 -482 -630 -910 -1638 -4096 Inf 4096 1638 910 630 482 390 315 256];
-    nS = BlockSize;
 
     %% Step 1
     % Generate a big vector including block pixels, p(x,-1) and p(-1,x), x=0..nS-1.
@@ -57,13 +60,11 @@ function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
     %% Step 3
     % Generate the intraPrediction maxtrix pred_mtx that
     % pred_mtx*pVec = pVec - pred_pVec
-
+    Intra_Angular = cell(33, 1);
     for predModeIntra = 2:34
         pred_mtx = zeros(vec_num, vec_num);
 
-        for i = 1:1 + 4 * nS
-            pred_mtx(i, i) = 1;
-        end
+        pred_mtx(1:1 + 4 * nS, 1:1 + 4 * nS) = eye(1 + 4 * nS);
 
         % VER Mode
         if (predModeIntra == 26)
@@ -162,7 +163,8 @@ function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
             if (y + 1) * intraPredAngle >= 0
                 iFact = bitand((y + 1) * intraPredAngle, 31);
             else
-                iFact = bitand(bitxor(-(y + 1) * intraPredAngle, 2^20 - 1) + 1, 31);
+                % 2^20-1
+                iFact = bitand(bitxor(-(y + 1) * intraPredAngle, hex2dec('FFFFF')) + 1, 31);
             end
             %iFact
             if iFact ~= 0
@@ -189,21 +191,7 @@ function [Intra_Angular] = Intra_Angular_Model(top, left, BlockSize)
             end
         end
 
-        ref(1:2 * nS + 1) = left';
-        ref(2 * nS + 2:4 * nS + 1) = top(2:end);
-        pred_pix = nan(nS, nS);
-        for i = (4 * nS + 2):vec_num
-            pred_pix_ind = i - 4 * nS - 1;
-            temp_w_line = pred_mtx(i, :);
-            ref_ind = find(temp_w_line ~= 0, 2);
-            ref_w = temp_w_line(ref_ind);
-            if numel(ref_ind) ~= 1
-                pred_pix(pred_pix_ind) = round(ref_w(1) * ref(ref_ind(1)) + ref_w(2) * ref(ref_ind(2)));
-            else
-                pred_pix(pred_pix_ind) = ref(ref_ind);
-            end
-        end
-
-        Intra_Angular{predModeIntra - 1} = pred_pix;
+        pred_pix = round(pred_mtx(4 * nS + 2:end, 1:4 * nS + 1) * ref);
+        Intra_Angular{predModeIntra - 1} = reshape(pred_pix, nS, nS);
     end
 end

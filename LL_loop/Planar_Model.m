@@ -1,3 +1,4 @@
+% 返回 Planar 模式预测值
 function Intra_Planar = Planar_Model(PU, PX, PY)
 
     % Intra Planar Prediction
@@ -29,3 +30,5 @@ function Intra_Planar = Planar_Model(PU, PX, PY)
     %     end
     % end
     % Intra_Planar = double(Intra_Planar);
+
+end

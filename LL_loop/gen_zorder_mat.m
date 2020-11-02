@@ -1,6 +1,6 @@
 function zorder = gen_zorder_mat()
 
-    %浜х敓鍏充簬z鍨嬫壂鎻忕殑椤哄簭鐭╅樀
+    %产生关于z型扫描的顺序矩阵
     x = 1;
     y = 1;
     A = zeros(16, 16);

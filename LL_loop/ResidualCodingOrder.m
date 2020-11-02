@@ -1,6 +1,5 @@
+% 根据块的预测模式，确定该块残差的扫描顺序 （查标准）
 function Y = ResidualCodingOrder(A, cIdx, IntraPredModeY, IntraPredModeC)
-    %UNTITLED 此处显示有关此函数的摘要
-    %   此处显示详细说明
     TrafoSize = size(A, 1);
     if ((TrafoSize == 4) || (TrafoSize == 8))
         if (cIdx == 0)

@@ -1,3 +1,6 @@
+% 分别用块状和环状编码一个块
+% 4x4 块固定用块状
+% 环状的块做到 4x4
 function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU_comb(CTU, img_src, img_rebuild, split_frame, mode_frame)
 
     [z_ind_x_mat, z_ind_y_mat, z_size_mat, rdc_ind_mat] = gen_z_mat();
@@ -13,7 +16,7 @@ function [CTU_bits, img_rebuild, split_frame, mode_frame] = encode_CTU_comb(CTU,
         rdc_ind = rdc_ind_mat(i);
         switch z_size_mat(i)
             case 4
-                [img_rebuild, split_frame, mode_frame, rdc_4(rdc_ind)] = get_rdc4_comb(x, y, img_src, img_rebuild, split_frame, mode_frame);
+                [img_rebuild, split_frame, mode_frame, rdc_4(rdc_ind)] = get_rdc4(x, y, img_src, img_rebuild, split_frame, mode_frame);
 
             case 8
                 [img_rebuild, split_frame, mode_frame, rdc_8(rdc_ind)] = get_rdc8_comb(x, y, img_src, img_rebuild, split_frame, mode_frame, rdc_4, rdc_ind);

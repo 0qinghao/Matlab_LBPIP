@@ -1,4 +1,5 @@
-function [prederr, pred, sae, mode] = mode_select_loop_singleloop(Seq, Seq_r, i, j, k, PU)
+% 新分块方法下，前一半环的预测过程
+function [prederr, pred, sae, mode] = select_single_loop_np(Seq, Seq_r, i, j, k, PU, mask)
     dst = Seq(i:i + PU - 1, j:j + PU - 1);
     [dst_1d] = get_dst_k_loop(dst, k, PU);
     [PX, PY] = get_px_py(Seq_r, i, j, k, PU);
@@ -45,7 +46,20 @@ function [prederr, pred, sae, mode] = mode_select_loop_singleloop(Seq, Seq_r, i,
     pred_pixels{35} = pred_ang{33};
     for m = 1:35
         prederr_all{m} = dst_1d - pred_pixels{m};
-        sae_all(m) = sum(abs(prederr_all{m}));
+
+        prederr_full_loop = prederr_all{m};
+        % 在前一半环状中，不同模式下，需要计算预测残差的对象不同
+        switch mask
+            case {1111, 1110}
+                prederr_for_cal_sae = prederr_full_loop;
+            case 0111
+                prederr_for_cal_sae = prederr_full_loop([1:PU / 2, end - (PU / 2 - 1):end]);
+            case 1011
+                prederr_for_cal_sae = prederr_full_loop([1:end - PU / 2]);
+            case 1101
+                prederr_for_cal_sae = prederr_full_loop([PU / 2 + 1:end]);
+        end
+        sae_all(m) = sum(abs(prederr_for_cal_sae));
     end
     [sae, mode] = min(sae_all);
     prederr = prederr_all{mode};

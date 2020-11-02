@@ -1,3 +1,4 @@
+% 环状模式下的 PLANAR 预测
 % function [TOP, LEFT, TOPLEFT] = Planar_Model_loop(PU, PX, PY)
 function [pred_1d] = Planar_Model_loop(PU, PX, PY)
 
@@ -10,9 +11,8 @@ function [pred_1d] = Planar_Model_loop(PU, PX, PY)
     % Output:
     %   Intra_Planar : Planar Predicted Output PU
 
-    % 鏆傛椂鐢ㄦ渶杈圭紭鐨勫儚绱犳浛浠ｅ渚ф墿灞曠殑閭ｄ釜
-    tr = PY(PU + 1);
-    bl = PX(PU + 1);
+    tr = PY(end);
+    bl = PX(end);
     j = 1;
     for i = 1:PU
         w_t = PU - 1 - (i - 1);

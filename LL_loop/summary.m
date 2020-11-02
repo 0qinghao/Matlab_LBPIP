@@ -1,3 +1,4 @@
+% 统计一帧图像的体积、分块
 function [size_all, blk_size_sum] = summary(CTU_bits, split_frame, mode_frame)
 
     size_all = sum(CTU_bits);

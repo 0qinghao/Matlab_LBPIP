@@ -1,7 +1,8 @@
-function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_main_comb(srcy)
+% 编码时分别计算一个块 块状方式 和 环状方式 的 rdcost，择优
+% 环状方式一直做到 4x4
+% 4x4 块固定用块状方式
+function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_main_comb_loop24(srcy)
     initGlobals(100);
-    % global zorder;
-    % zorder = gen_zorder_mat();
 
     [CTU, img_src] = split_CTU(srcy);
     [h, w] = size(srcy);
@@ -16,4 +17,6 @@ function [size_all, blk_size_sum, split_frame, mode_frame, CTU_bits] = encode_ma
     end
 
     [size_all, blk_size_sum] = summary(CTU_bits, split_frame, mode_frame);
+    % 该方法下需要 1bit/块 记录当前块用的是块状还是环状 （4x4 块除外）
+    size_all = size_all + sum(blk_size_sum(2:end));
 end

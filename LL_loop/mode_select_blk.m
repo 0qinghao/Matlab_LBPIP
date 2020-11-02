@@ -1,3 +1,4 @@
+% HEVC 标准方法遍历一个块 35 种预测方式，选取 sae(sum of abs err) 最小的一种，返回该种预测方式下的 预测误差prederr、预测值pred、sae、mode
 function [prederr, pred, sae, mode] = mode_select_blk(Seq, Seq_r, i, j, PU)
     dst = Seq(i:i + PU - 1, j:j + PU - 1);
     if (i == 1 || j == 1)

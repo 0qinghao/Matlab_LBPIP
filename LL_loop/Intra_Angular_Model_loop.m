@@ -1,12 +1,15 @@
-% loop æ¨¡å¼ä¸­çš„ top å’Œ left ä»…æ˜¯é¢„æµ‹å—ä¸Šæ–¹å’Œå·¦æ–¹çš„å†…å®¹ï¼Œå¹¶æ²¡æœ‰å³ä¸Šè§’å·¦ä¸‹è§’çš„æ‰©å±•
-function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, BlockSize)
+% loop Ä£Ê½ÏÂ 33 ¸ö½Ç¶È·½Ê½µÄÔ¤²â
+function [pred_1d] = Intra_Angular_Model_loop(top, left, nS)
 
-    single_loop_index = [[4 * BlockSize + 2:5 * BlockSize + 1], [5 * BlockSize + 2:BlockSize:(BlockSize + 3) * BlockSize + 2]];
+    % »·×´Ä£Ê½ÏÂ²¢²»ÐèÒª¼ÆËãÕû¸ö¿éµÄÔ¤²âÖµ£¬½öÐè¼ÆËãÏÂÁÐ index µÄÔ¤²âÖµ
+    single_loop_index = [[5 * nS + 1:-1:4 * nS + 2], [5 * nS + 2:nS:(nS + 3) * nS + 2]];
 
-    top = Top_Pixels_t;
-    top(end + 1:2 * BlockSize + 1) = Top_Pixels_t(end);
-    left = Left_Pixels_t;
-    left(end + 1:2 * BlockSize + 1) = Left_Pixels_t(end);
+    % ²¹È«³¤¶È·½±ã´úÂëÔËÐÐ£¬Êµ¼ÊÉÏ²¹³äµÄÄÚÈÝ²»¿ÉÄÜ±»ÓÃÓÚ»·×´µÄÔ¤²âÖµ¼ÆËã
+    top(end + 1:2 * nS + 1) = 0;
+    left(end + 1:2 * nS + 1) = 0;
+    ref(1:2 * nS + 1) = left';
+    ref(2 * nS + 2:4 * nS + 1) = top(2:end);
+    ref = ref';
 
     intraPredAngleSet = [NaN, NaN, ...% Planar, DC
                     32, 26, 21, 17, 13, 9, 5, 2, 0, -2, -5, -9, -13, -17, -21, -26, ...%INTRA_ANGULAR2 ~ INTRA_ANGULAR17
@@ -14,7 +17,6 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
 
     % invAngleSet = round( 2^13./intraPredAngleSet );
     invAngleSet = [NaN NaN 256 315 390 482 630 910 1638 4096 Inf -4096 -1638 -910 -630 -482 -390 -315 -256 -315 -390 -482 -630 -910 -1638 -4096 Inf 4096 1638 910 630 482 390 315 256];
-    nS = BlockSize;
 
     %% Step 1
     % Generate a big vector including block pixels, p(x,-1) and p(-1,x), x=0..nS-1.
@@ -22,12 +24,6 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
 
     p_vec = [];
     vec_num = 0;
-    %********************
-    %for i = -1:(-1+2*nS)
-    %    VecNum = VecNum + 1;
-    %    pVec = [pVec; [-1 i]];
-    %end
-    %********************
 
     % Left
     for y = -1:(-1 + 2 * nS)
@@ -48,27 +44,6 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
             p_vec = [p_vec; [x y]];
         end
     end
-
-    %vec_num
-    %p_vec
-
-    %% Step 2
-    % Generate the covariance matrix of the big vector
-    % cov_mtx_ext = zeros(vec_num, vec_num);
-
-    % for i = 1:vec_num
-    %     for j = 1:vec_num
-    %         ix = p_vec(i, 1); iy = p_vec(i, 2);
-    %         jx = p_vec(j, 1); jy = p_vec(j, 2);
-    %         cov_mtx_ext(i, j) = ...
-    %             rho^sqrt(((ix - jx) * cos(alpha) - (iy - jy) * sin(alpha))^2 + ...
-    %             eta^2 * ((ix - jx) * sin(alpha) + (iy - jy) * cos(alpha))^2);
-    %     end
-    % end
-
-    % for i = 1:4 * nS + 1
-    %     cov_mtx_ext(i, i) = cov_mtx_ext(i, i) + sigma^2;
-    % end
 
     %% ====== generate mapping from block to vector ======
     map_size = 2 * nS + 1;
@@ -92,13 +67,11 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
     %% Step 3
     % Generate the intraPrediction maxtrix pred_mtx that
     % pred_mtx*pVec = pVec - pred_pVec
-
+    pred_1d = cell(33, 1);
     for predModeIntra = 2:34
         pred_mtx = zeros(vec_num, vec_num);
 
-        for i = 1:1 + 4 * nS
-            pred_mtx(i, i) = 1;
-        end
+        pred_mtx(1:1 + 4 * nS, 1:1 + 4 * nS) = eye(1 + 4 * nS);
 
         % VER Mode
         if (predModeIntra == 26)
@@ -197,7 +170,8 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
             if (y + 1) * intraPredAngle >= 0
                 iFact = bitand((y + 1) * intraPredAngle, 31);
             else
-                iFact = bitand(bitxor(-(y + 1) * intraPredAngle, 2^20 - 1) + 1, 31);
+                % 2^20-1
+                iFact = bitand(bitxor(-(y + 1) * intraPredAngle, hex2dec('FFFFF')) + 1, 31);
             end
             %iFact
             if iFact ~= 0
@@ -224,28 +198,8 @@ function [pred_1d] = Intra_Angular_Model_loop(Top_Pixels_t, Left_Pixels_t, Block
             end
         end
 
-        ref(1:2 * nS + 1) = left';
-        ref(2 * nS + 2:4 * nS + 1) = top(2:end);
-        pred_pix = nan(nS, nS);
-        for i = single_loop_index
-            pred_pix_ind = i - 4 * nS - 1;
-            temp_w_line = pred_mtx(i, :);
-            ref_ind = find(temp_w_line ~= 0, 2);
-            ref_w = temp_w_line(ref_ind);
-            if numel(ref_ind) ~= 1
-                pred_pix(pred_pix_ind) = round(ref_w(1) * ref(ref_ind(1)) + ref_w(2) * ref(ref_ind(2)));
-            else
-                pred_pix(pred_pix_ind) = ref(ref_ind);
-            end
-        end
+        pred_pix = round(pred_mtx(single_loop_index, 1:4 * nS + 1) * ref);
+        pred_1d{predModeIntra - 1} = pred_pix';
 
-        if (BlockSize ~= 1)
-            TOP = pred_pix(1, 2:BlockSize);
-            LEFT = pred_pix(2:BlockSize, 1);
-            TOPLEFT = pred_pix(1, 1);
-            pred_1d{predModeIntra - 1} = [LEFT(end:-1:1)', TOPLEFT, TOP];
-        else
-            pred_1d{predModeIntra - 1} = pred_pix(1, 1);
-        end
     end
 end
