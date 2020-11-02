@@ -5,7 +5,7 @@
 % 1011: 保留右上角
 % 1101: 保留左下角
 % 1110: 右下角
-function [size_all, blk_size_sum, split_frame, mode_frame, loop_flag_frame_np, CTU_bits] = encode_main_np(srcy)
+function [size_all, blk_size_sum, split_frame, mode_frame, loop_flag_frame_np, CTU_bits, CTU_split_tree_bits, type_cnt] = encode_main_np(srcy)
     initGlobals(100);
 
     [CTU, img_src] = split_CTU(srcy);
@@ -15,10 +15,10 @@ function [size_all, blk_size_sum, split_frame, mode_frame, loop_flag_frame_np, C
     mode_frame = nan(h, w);
     loop_flag_frame_np = nan(h, w);
 
-    % for i = 1:numel(CTU)
-    for i = 1:2
+    for i = 1:numel(CTU)
+%     for i = 1:2
         i
-        [CTU_bits(i), img_rebuild, split_frame, mode_frame, loop_flag_frame_np] = encode_CTU_np(CTU(i), img_src, img_rebuild, split_frame, mode_frame, loop_flag_frame_np);
+        [CTU_bits(i), CTU_split_tree_bits(i), type_cnt{i}, img_rebuild, split_frame, mode_frame, loop_flag_frame_np] = encode_CTU_np(CTU(i), img_src, img_rebuild, split_frame, mode_frame, loop_flag_frame_np);
     end
 
     [size_all, blk_size_sum] = summary(CTU_bits, split_frame, mode_frame);
